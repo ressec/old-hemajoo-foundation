@@ -1,0 +1,431 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.hemajoo.foundation</groupId>
+	<artifactId>parent</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Hemajoo's Foundation parent project.</name>
+
+
+	<licenses>
+		<license>
+			<name>Apache License</name>
+			<url>https://github.com/ressec/demeter/blob/master/LICENSE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<url>scm:git:git@github.com:ressec/hemajoo-foundation.git</url>
+		<connection>scm:git:git@github.com:ressec/hemajoo-foundation.git</connection>
+		<developerConnection>scm:git:git@github.com:ressec/hemajoo-foundation.git</developerConnection>
+	</scm>
+
+	<organization>
+		<name>Hemajoo</name>
+		<url>https://github.com/ressec/hemajoo-foundation</url>
+	</organization>
+
+	<inceptionYear>2017</inceptionYear>
+
+	<developers>
+		<developer>
+			<email>christophe.resse@gmail.com</email>
+			<name>Resse Christophe</name>
+			<url>https://github.com/ressec</url>
+			<id>ressec</id>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/ressec/hemajoo-foundation/issues</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/ressec/hemajoo-foundation</url>
+	</ciManagement>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.directory.benchmark>${basedir/benchmark}</project.directory.benchmark>
+		<project.directory.run>${basedir/run}</project.directory.run>
+		<project.directory.data>${basedir/data}</project.directory.data>
+		<project.directory.log>${basedir/log}</project.directory.log>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+
+		<pluginManagement>
+
+			<plugins>
+
+				<!-- COMPILATION -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.6.1</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+						<encoding>UTF-8</encoding>
+					</configuration>
+				</plugin>
+
+				<!-- SOURCES -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.0.1</version>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- JAVADOC -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.10.4</version>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+							<configuration>
+								<show>private</show>
+								<quiet>true</quiet>
+								<failOnError>false</failOnError>
+								<additionalparam>-Xdoclint:none</additionalparam>
+							</configuration>
+						</execution>
+						<execution>
+							<id>aggregate</id>
+							<phase>site</phase>
+							<goals>
+								<goal>aggregate</goal>
+							</goals>
+							<configuration>
+								<show>private</show>
+								<quiet>true</quiet>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- SITE -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.6</version>
+					<configuration>
+						<failOnError>false</failOnError>
+						<additionalparam>-Xdoclint:none</additionalparam>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>site</goal>
+							</goals>
+							<phase>deploy</phase>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- SUREFIRE -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.20</version>
+				</plugin>
+
+				<!-- JAR: Create a jar of the test classes. -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.0.2</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>test-jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- NATIVEDEPENDENCIES: Unpack every dependency with a classifier beginning with 'natives-'. -->
+				<plugin>
+					<groupId>com.googlecode.mavennatives</groupId>
+					<artifactId>maven-nativedependencies-plugin</artifactId>
+					<version>0.0.7</version>
+					<executions>
+						<execution>
+							<id>unpacknatives</id>
+							<goals>
+								<goal>copy</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<nativesTargetDir>target/natives</nativesTargetDir>
+						<separateDirs>true</separateDirs>
+					</configuration>
+				</plugin>
+
+				<!-- RELEASE: This plugin is used to release a project with Maven. -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
+				</plugin>
+
+			</plugins>
+
+		</pluginManagement>
+
+	</build>
+
+	<repositories>
+
+		<repository>
+			<id>nexus-snapshots</id>
+			<url>http://83.153.27.91:9086/nexus/content/groups/public-snapshots</url>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>nexus-releases</id>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>warn</checksumPolicy>
+			</snapshots>
+			<url>http://83.153.27.91:9086/nexus/content/groups/public</url>
+		</repository>
+
+	</repositories>
+
+	<pluginRepositories>
+	</pluginRepositories>
+
+	<distributionManagement>
+
+		<!-- Publish the releases here -->
+		<repository>
+			<id>nexus-releases</id>
+			<name>nexus-releases</name>
+			<url>http://83.153.27.91:9086/nexus/content/repositories/releases/</url>
+		</repository>
+
+		<!-- Publish the snapshots here -->
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>nexus-snapshots</name>
+			<url>http://83.153.27.91:9086/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+
+	</distributionManagement>
+	<dependencyManagement>
+		<dependencies>
+
+			<dependency>
+				<groupId>uk.com.robust-it</groupId>
+				<artifactId>cloning</artifactId>
+				<version>1.9.3</version>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.12</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.thoughtworks.xstream</groupId>
+				<artifactId>xstream</artifactId>
+				<version>1.4.9</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.beryx</groupId>
+				<artifactId>text-io</artifactId>
+				<version>2.4.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>jline</groupId>
+				<artifactId>jline</artifactId>
+				<version>2.14.4</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>1.2.14</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>1.6</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+	
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>1.3.160</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>com.carrotsearch</groupId>
+				<artifactId>junit-benchmarks</artifactId>
+				<version>0.6.0</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>eu.infomas</groupId>
+				<artifactId>annotation-detector</artifactId>
+				<version>3.0.5</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>org.easyrules</groupId>
+				<artifactId>easyrules-core</artifactId>
+				<version>2.2.0</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
+				<version>1.4.0</version>
+			</dependency>
+	
+			<dependency>
+				<groupId>com.darwinsys</groupId>
+				<artifactId>hirondelle-date4j</artifactId>
+				<version>1.5.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.neovisionaries</groupId>
+				<artifactId>nv-i18n</artifactId>
+				<version>1.18</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>commons-configuration</groupId>
+				<artifactId>commons-configuration</artifactId>
+				<version>1.9</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>1.16.10</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>19.0</version>
+			</dependency>
+
+			<dependency>
+			    <groupId>com.github.javafaker</groupId>
+			    <artifactId>javafaker</artifactId>
+			    <version>0.14</version>
+			</dependency>
+
+			<dependency>
+			    <groupId>org.hibernate.javax.persistence</groupId>
+			    <artifactId>hibernate-jpa-2.1-api</artifactId>
+			    <version>1.0.0.Final</version>
+			</dependency>
+
+			<dependency>
+		        <groupId>org.hibernate</groupId>
+		        <artifactId>hibernate-entitymanager</artifactId>
+		        <version>5.2.12.Final</version>
+		    </dependency>
+
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>42.1.4</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+	<url>https://github.com/ressec/hemajoo-foundation</url>
+	<description>Parent project for the Hemajoo’s Foundation framework.</description>
+	
+	<modules>
+		
+		
+
+		<module>../hemajoo-foundation-common</module>
+	</modules>
+	
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.7.RELEASE</version>
+	</parent>
+		
+</project>

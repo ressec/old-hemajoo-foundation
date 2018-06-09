@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>hemajoo-foundation-common</artifactId>
+  <name>Hemajoo's Foundation Common project</name>
+  <parent>
+  	<groupId>com.hemajoo.foundation</groupId>
+  	<artifactId>parent</artifactId>
+  	<version>0.0.1-SNAPSHOT</version>
+  	<relativePath>../hemajoo-foundation-parent</relativePath>
+  </parent>
+  
+  <dependencies>
+  
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-io</groupId>
+  		<artifactId>commons-io</artifactId>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-configuration</groupId>
+  		<artifactId>commons-configuration</artifactId>
+  	</dependency>
+  	<dependency>
+  		<groupId>log4j</groupId>
+  		<artifactId>log4j</artifactId>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.projectlombok</groupId>
+  		<artifactId>lombok</artifactId>
+  	</dependency>
+
+	<dependency>
+		<groupId>com.neovisionaries</groupId>
+		<artifactId>nv-i18n</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>com.google.guava</groupId>
+		<artifactId>guava</artifactId>
+	</dependency>
+
+	<dependency>
+		<groupId>eu.infomas</groupId>
+		<artifactId>annotation-detector</artifactId>
+	</dependency>
+
+  </dependencies>
+
+  <url>https://github.com/ressec/hemajoo-foundation</url>
+  <inceptionYear>2018</inceptionYear>
+  <description>Provides common artefacts for the Hemajoo’s foundation framework.</description>
+  <organization>
+  	<name>Hemajoo</name>
+  	<url>https://github.com/ressec/hemajoo-foundation</url>
+  </organization>
+  <scm>
+  	<url>scm:git:git@github.com:ressec/hemajoo-foundation.git</url>
+  	<connection>scm:git:git@github.com:ressec/hemajoo-foundation.git</connection>
+  	<developerConnection>scm:git:git@github.com:ressec/hemajoo-foundation.git</developerConnection>
+  </scm>
+  <issueManagement>
+  	<system>GitHub Issues</system>
+  	<url>https://github.com/ressec/hemajoo-foundation/issues</url>
+  </issueManagement>
+  <ciManagement>
+  	<system>Travis CI</system>
+  	<url>https://travis-ci.org/ressec/hemajoo-foundation</url>
+  </ciManagement>
+</project>
