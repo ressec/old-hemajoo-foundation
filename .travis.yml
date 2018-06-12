@@ -18,7 +18,6 @@ cache:
   #- target/
 
 before_script:
-  - psql -c "CREATE DATABASE geolocation;" -U postgres
 
 script: mvn clean package -f hemajoo-foundation-parent/pom.xml
 
