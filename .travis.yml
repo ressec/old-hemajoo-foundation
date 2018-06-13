@@ -26,6 +26,7 @@ deploy:
   script: "cp hemajoo-foundation-parent/etc/deploy-settings.xml $HOME/.m2/settings.xml && mvn deploy -f hemajoo-foundation-parent/pom.xml"
   skip_cleanup: false
   on:
+    # Test if 'false' means that for each successful build, an artifact is deployed?
     tags: false
 
 notifications:
