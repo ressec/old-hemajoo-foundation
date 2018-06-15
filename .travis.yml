@@ -40,6 +40,6 @@ notifications:
     on_failure: always
   slack:
     rooms:
-      - heliosphere-team:Bja0bgXlnUECFqYeffLcSzvX#travis-hemajoo
+      - hemajoo:Bja0bgXlnUECFqYeffLcSzvX#travis-foundation
 
 
