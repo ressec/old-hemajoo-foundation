@@ -42,4 +42,4 @@ notifications:
     rooms:
       # hemajoo is the Slack workplace
       # travis-foundation is the channel
-      - hemajoo:Bja0bgXlnUECFqYeffLcSzvX#travis-foundation
+      - hemajoo:lOkFRXlNg0sP7EhvnGUq3gZJ#travis-foundation
