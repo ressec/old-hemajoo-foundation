@@ -26,7 +26,10 @@ deploy:
   script: "cp hemajoo-foundation-parent/etc/deploy-settings.xml $HOME/.m2/settings.xml && mvn deploy -f hemajoo-foundation-parent/pom.xml"
   skip_cleanup: false
   on:
-    # Test if 'false' means that for each successful build, an artifact is deployed?
+    # Set 'tags' to:
+    # . 'true'  which will force the deployment of the artifact after a successful build only when the commit is tagged. So even if a merge request to 'master' is
+    #           successful, the built artifact will not be deployed to the repository.
+    # . 'false' which will force the deployment of the artifact after a successful build only when merged on the 'master' branch.
     tags: false
 
 notifications:
@@ -36,6 +39,7 @@ notifications:
     on_success: change
     on_failure: always
   slack:
-    secure: NAo+R/TsqVQVxofrNQiJ1WcyKfBhifjVzCHQy7/5u/+5Vu2ycIluqK76rMGgsd7hB6Bfeo2KUpQsCfd2cOlNOIRMqoHcAmfiBYvaau8VaoXVF9JTprXcEM1N9lXx6zDeHvTzGvTOVN54MZaEWeJNSnYHZktKuZaUbvk+c1b7vmiX6OXvfu/jOBA1+KkfoCmxnC5GObUgNmx9YZowhNr75EPLN+vXK7//6YRZ42kEzjUlkr8Q2wmg528wbRIdltBg+bG47QRHONFhH2iRIuKewO8rwEk2vAyvm1ArLvxLipJrIN7GMwcoGTzTFk6pUoX7ifgz5WAh1LFyz30ehprrVpVKslwF1HknzVUvSIp+RDSbEbiJyxp4P8CiZ0N6Bfo3g/lfy7HutEKlhB7QqonDTneHinfN371FwbbI/VzXkmzB55BHXsqH+be3GNiBOihU88EhS2M5l93uzLclhJwXbiuQO+VM07qaNt+9RFLg/mm+LH3a7AmB+vvTqMI7CEFDDGv2NcOXyDUl0XnnxQl/8XziSr0sx/JCDsxQTwCD03rVjKRUAOfoYTijM7H0sJAYRE5HW+iwPzhHwjSIXZPSFEeHFWYenwUInd7iFEQng7a2l/eRELhMBuWA0qBSNnbcGFQttt2bq/51NYZMKUu41An1gN56i/sHk7Od49KHjT4=
-
-
+    rooms:
+      # hemajoo is the Slack workplace
+      # travis-foundation is the channel
+      - hemajoo:lOkFRXlNg0sP7EhvnGUq3gZJ#travis-foundation
