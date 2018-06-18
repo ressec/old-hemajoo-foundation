@@ -1,8 +1,8 @@
 /*
- * Copyright(c) 2018-2018 Hemajoo Ltd.
+ * Copyright(c) 2018 Hemajoo Ltd.
  * ---------------------------------------------------------------------------
- * This file is part of the Hemajoo's Foundation project which is licensed under the 
- * Apache license version 2 and use is subject to license terms.
+ * This file is part of the Hemajoo's Foundation project which is licensed
+ * under the Apache license version 2 and use is subject to license terms.
  * You should have received a copy of the license with the project's artifact
  * binaries and/or sources.
  * 
