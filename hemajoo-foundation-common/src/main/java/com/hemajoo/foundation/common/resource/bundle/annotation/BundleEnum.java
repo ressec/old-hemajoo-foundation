@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * get an automatic binding between enumerated values and resource bundle entries in a resource
  * bundle file.
  * <p>
- * For an example on how to use it, take a look at the {@link HonorificType} enumeration.
+ * For an example on how to use it, take a look at the {@link TestHonorificType} enumeration.
  * This is an enumeration that is getting the string values for each enumerated values
  * from resource bundle files.
  * <hr>
