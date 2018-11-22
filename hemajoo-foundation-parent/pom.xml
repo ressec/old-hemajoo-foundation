@@ -58,6 +58,7 @@
 		<project.directory.run>${basedir/run}</project.directory.run>
 		<project.directory.data>${basedir/data}</project.directory.data>
 		<project.directory.log>${basedir/log}</project.directory.log>
+		<project.java.version>9</project.java.version>
 	</properties>
 
 	<dependencies>
@@ -77,10 +78,10 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.8.0</version>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<source>${project.java.version}</source>
+						<target>${project.java.version}</target>
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
