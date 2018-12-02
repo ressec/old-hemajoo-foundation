@@ -61,13 +61,6 @@
 		<project.directory.log>${basedir/log}</project.directory.log>
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-	</dependencies>
-
 	<build>
 
 		<pluginManagement>
@@ -438,12 +431,5 @@
 	<modules>
 		<module>../hemajoo-foundation-common</module>
 	</modules>
-	
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.7.RELEASE</version>
-		<relativePath/>
-	</parent>
 		
 </project>
