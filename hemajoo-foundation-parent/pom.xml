@@ -137,10 +137,10 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.7.1</version>
-					<configuration>
-						<failOnError>false</failOnError>
-						<additionalparam>-Xdoclint:none</additionalparam>
-					</configuration>
+<!-- 					<configuration> -->
+<!-- 						<failOnError>false</failOnError> -->
+<!-- 						<additionalparam>-Xdoclint:none</additionalparam> -->
+<!-- 					</configuration> -->
 					<executions>
 						<execution>
 							<goals>
@@ -365,7 +365,7 @@
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
-				<version>1.16.10</version>
+				<version>1.18.4</version>
 			</dependency>
 
 			<dependency>
@@ -414,11 +414,27 @@
 	</dependencyManagement>
 	<url>https://github.com/ressec/hemajoo-foundation</url>
 	<description>Parent project for the Hemajoo’s Foundation framework.</description>
+
+	<reporting>
+	    <plugins>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-project-info-reports-plugin</artifactId>
+	            <version>3.0.0</version>
+	            <reportSets>
+	                <reportSet>
+	                    <reports>
+	                        <report>index</report>
+	                        <report>licenses</report>
+	                        <report>dependency-info</report>
+	                    </reports>
+	                </reportSet>
+	            </reportSets>
+	        </plugin>
+	    </plugins>
+	</reporting>
 	
 	<modules>
-		
-		
-
 		<module>../hemajoo-foundation-common</module>
 	</modules>
 	
@@ -426,6 +442,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.5.7.RELEASE</version>
+		<relativePath/>
 	</parent>
 		
 </project>
