@@ -53,7 +53,7 @@
 	</ciManagement>
 
 	<properties>
-		<project.java.version>8</project.java.version>
+		<project.java.version>9</project.java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.directory.benchmark>${basedir/benchmark}</project.directory.benchmark>
 		<project.directory.run>${basedir/run}</project.directory.run>
