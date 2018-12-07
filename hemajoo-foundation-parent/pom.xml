@@ -6,7 +6,7 @@
 	<artifactId>parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Hemajoo's Foundation parent project.</name>
+	<name>Hemajoo's Foundation Software (HFS) project.</name>
 
 
 	<licenses>
@@ -420,7 +420,7 @@
 		</dependencies>
 	</dependencyManagement>
 	<url>https://github.com/ressec/hemajoo-foundation</url>
-	<description>Parent project for the Hemajoo’s Foundation framework.</description>
+	<description>Parent project for the Hemajoo’s Foundation Software (HFS) framework.</description>
 
 	<reporting>
 	    <plugins>
