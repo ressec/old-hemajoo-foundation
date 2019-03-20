@@ -27,7 +27,7 @@ cache:
 #before_script:
 
 script: 
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -f hemajoo-foundation-parent/pom.xml
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -f hemajoo-foundation-parent/pom.xml -Dsonar.projectKey=com.hemajoo.foundation:parent -D-Dsonar.organization=ressec-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=8b965a04cd08902c2f90cb41eafdbdf61066e889
 
 deploy:
   provider: script
