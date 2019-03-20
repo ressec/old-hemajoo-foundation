@@ -14,11 +14,11 @@ services:
   - postgresql
 
 addons:
-  - postgresql: "9.6"
+  postgresql: "9.6"
   sonarcloud:
     organization: "ressec-github"
-  token:
-    secure: "${SONAR_TOKEN}"
+    token:
+      secure: "${SONAR_TOKEN}"
 
 cache:
   - $HOME/.m2
