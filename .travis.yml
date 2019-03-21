@@ -3,8 +3,7 @@
 #
 
 # see https://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure
-language: 
-  - java
+language: java
 
 jdk: 
   - oraclejdk9
@@ -20,14 +19,11 @@ addons:
     token:
       secure: "${SONAR_TOKEN}"
 
-cache:
-  - $HOME/.m2
-  #- target/
-
+#cache:
 #before_script:
 
 script: 
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -f hemajoo-foundation-parent/pom.xml
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -f hemajoo-foundation-parent/pom.xml -Dsonar.projectKey=ressec_hemajoo-foundation
 
 deploy:
   provider: script
