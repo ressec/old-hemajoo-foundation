@@ -9,6 +9,10 @@
   	<relativePath>../hemajoo-foundation-parent</relativePath>
   </parent>
   
+  <build>
+  	<finalName>${project.groupId}-${project.artifactId}-${project.version}</finalName>  
+  </build>
+  
   <dependencies>
   
   	<dependency>
