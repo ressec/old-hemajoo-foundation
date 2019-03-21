@@ -6,7 +6,7 @@
 	<artifactId>parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Hemajoo's Foundation Software (HFS) project.</name>
+	<name>Hemajoo's Foundation Software project (HFS).</name>
 
 
 	<licenses>
@@ -71,7 +71,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>3.8.0</version>
 					<configuration>
 						<source>${project.java.version}</source>
 						<target>${project.java.version}</target>
@@ -396,7 +396,7 @@
 			<dependency>
 			    <groupId>com.github.javafaker</groupId>
 			    <artifactId>javafaker</artifactId>
-			    <version>0.14</version>
+			    <version>0.17.2</version>
 			</dependency>
 
 			<dependency>
