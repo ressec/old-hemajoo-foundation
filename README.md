@@ -2,7 +2,7 @@
 
 ### Travis CI status
 
-[![Build Status](https://travis-ci.com/ressec/hemajoo-foundation.svg?branch=master)](https://travis-ci.com/ressec/hemajoo-foundation)
+[![Build Status](https://travis-ci.org/ressec/hemajoo-foundation.svg?branch=master)](https://travis-ci.org/ressec/hemajoo-foundation)
 
 ---
 
