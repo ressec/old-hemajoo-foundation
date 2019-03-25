@@ -22,6 +22,7 @@ import com.hemajoo.foundation.common.resource.bundle.IBundle;
 import com.hemajoo.foundation.common.resource.bundle.ResourceBundleManager;
 import com.hemajoo.foundation.common.resource.bundle.annotation.Bundle;
 
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j;
 
 /**
@@ -70,20 +71,31 @@ public final class BundleVisitor implements IAnnotationVisitor
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void delegateRegistration() throws ClassNotFoundException
 	{
-		// Used to test if order is conserved.
 		files.entrySet()
 		.stream()
-		.forEach(e -> System.out.println(e.getValue()));
+		.forEach(e -> e.getValue()
+				.stream()
+				.forEach(this::callForRegistration));
+	}
 
-		for (Integer i : files.keySet())
+	/**
+	 * Call the resource bundle manager to register the given class annotated with
+	 * the {@link Bundle} annotation.
+	 * <hr>
+	 * @param className Name of the class annotated with the {@link Bundle} annotation.
+	 */
+	@SuppressWarnings("unchecked")
+	private final void callForRegistration(final @NonNull String className)
+	{
+		try
 		{
-			for (String e : files.get(i))
-			{
-				ResourceBundleManager.register((Class<? extends IBundle>) Class.forName(e));
-			}
+			ResourceBundleManager.register((Class<? extends IBundle>) Class.forName(className));
+		}
+		catch (ClassNotFoundException e)
+		{
+			log.error(e.getMessage(), e);
 		}
 	}
 }
