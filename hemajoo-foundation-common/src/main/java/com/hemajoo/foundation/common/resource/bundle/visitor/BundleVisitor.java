@@ -21,7 +21,6 @@ import com.hemajoo.foundation.common.annotation.IAnnotationVisitor;
 import com.hemajoo.foundation.common.resource.bundle.IBundle;
 import com.hemajoo.foundation.common.resource.bundle.ResourceBundleManager;
 import com.hemajoo.foundation.common.resource.bundle.annotation.Bundle;
-import com.hemajoo.foundation.common.resource.bundle.annotation.FakeAnnotatedWithBundle;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j;
@@ -89,16 +88,13 @@ public final class BundleVisitor implements IAnnotationVisitor
 	 */
 	private final void callForRegistration(final @NonNull String className)
 	{
-		if (!className.equals(FakeAnnotatedWithBundle.class.getName()))
+		try
 		{
-			try
-			{
-				ResourceBundleManager.register(Class.forName(className));
-			}
-			catch (ClassNotFoundException e)
-			{
-				log.error(e.getMessage(), e);
-			}
+			ResourceBundleManager.register(Class.forName(className));
+		}
+		catch (ClassNotFoundException e)
+		{
+			log.error(e.getMessage(), e);
 		}
 	}
 }
