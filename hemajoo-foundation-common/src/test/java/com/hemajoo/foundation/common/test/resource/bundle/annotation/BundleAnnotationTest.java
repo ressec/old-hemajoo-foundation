@@ -11,17 +11,24 @@
  */
 package com.hemajoo.foundation.common.test.resource.bundle.annotation;
 
+import static org.junit.Assert.fail;
+
+import java.text.Collator;
+import java.util.Locale;
+
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.hemajoo.foundation.common.exception.ResourceBundleException;
+import com.hemajoo.foundation.common.resource.ResourceException;
+import com.hemajoo.foundation.common.resource.bundle.BundleLoadStrategyType;
+import com.hemajoo.foundation.common.resource.bundle.HemajooFoundationCommonBundle;
+import com.hemajoo.foundation.common.resource.bundle.ResourceBundleManager;
 import com.hemajoo.foundation.common.resource.bundle.annotation.Bundle;
-import com.hemajoo.foundation.common.resource.bundle.visitor.BundleVisitor;
-
-import eu.infomas.annotation.AnnotationDetector;
+import com.hemajoo.foundation.common.test.resource.bundle.type.TestHonorificType;
 
 
 /**
@@ -40,7 +47,8 @@ public final class BundleAnnotationTest
 	@BeforeClass
 	public static final void setUpBeforeClass() throws Exception
 	{
-		// Empty
+		// Ensure the HemajooFoundationCommonBundle and associated resource bundle file is loaded first.
+		ResourceBundleManager.getMessage(HemajooFoundationCommonBundle.TEST_DUMMY_LANGUAGE);
 	}
 
 	/**
@@ -77,22 +85,159 @@ public final class BundleAnnotationTest
 	}
 
 	/**
-	 * Test the registration of resource bundle files.
+	 * Test the direct registration of a resource bundle file (not thorugh the use of an annotation).
 	 */
-	@SuppressWarnings("static-method")
+	@SuppressWarnings({ "static-method", "nls" })
 	@Test
 	public final void registerAnnotatedClasses()
 	{
+		ResourceBundleManager.getLocale();
+		ResourceBundleManager.register("bundle/hemajoo-foundation-common");
+	}
+
+	/**
+	 * Test the retrieving of a resource bundle string through its key.
+	 */
+	@SuppressWarnings({ "static-method", "nls" })
+	@Test
+	public final void testRetrieveMessageByKey()
+	{
 		try
 		{
-			BundleVisitor visitor = new BundleVisitor();
-			final AnnotationDetector detector = new AnnotationDetector(visitor);
-			detector.detect();
-			visitor.delegateRegistration();
+			ResourceBundleManager.setLocale(Locale.ENGLISH);
+			Assert.assertTrue("Not the expected value!", Collator.getInstance(ResourceBundleManager.ENGLISH)
+					.equals(ResourceBundleManager.getMessage("queen.album.ten-first.9"), "Flash Gordon"));
 		}
-		catch (Exception e)
+		catch (final ResourceException e)
 		{
-			throw new ResourceBundleException(e.getMessage(), e);
+			fail(e.getLocalizedMessage());
 		}
+	}
+
+	/**
+	 * Test
+	 */
+	@SuppressWarnings({ "static-method", "nls" })
+	@Test
+	public final void testDirectBundleRegistrationUsingRoot()
+	{
+		try
+		{
+			ResourceBundleManager.setLocale(Locale.ENGLISH);
+			ResourceBundleManager.register("bundle/color/color", "color");
+
+			Assert.assertTrue("Not the expected value!", Collator.getInstance(ResourceBundleManager.ENGLISH)
+					.equals(ResourceBundleManager.getMessage("blue.name"), "Blue"));
+		}
+		catch (final ResourceException e)
+		{
+			fail(e.getLocalizedMessage());
+		}
+	}
+
+	/**
+	 * Test the retrieving of a resource bundle string through an enumerated value.
+	 */
+	@SuppressWarnings({ "static-method", "nls" })
+	@Test
+	public final void testRetrieveMessageByEnum()
+	{
+		try
+		{
+			ResourceBundleManager.setLocale(Locale.FRENCH);
+			Assert.assertTrue("Not the expected value!",
+					ResourceBundleManager.getMessage(HemajooFoundationCommonBundle.TEST_DUMMY_LANGUAGE).equals("Français"));
+		}
+		catch (final ResourceException e)
+		{
+			fail(e.getLocalizedMessage());
+		}
+	}
+
+	/**
+	 * Test the registration of a resource bundle in a different language than the resource
+	 * bundle manager one.
+	 */
+	@SuppressWarnings({ "static-method", "nls" })
+	@Test
+	public final void testRegisterBundleWithNonCompatibleLocaleLenient()
+	{
+		ResourceBundleManager.setStrategy(BundleLoadStrategyType.LENIENT);
+		ResourceBundleManager.setLocale(Locale.ENGLISH);
+		ResourceBundleManager.register("bundle/hemajoo-foundation-common", Locale.FRENCH);
+	}
+
+	/**
+	 * Test the registration of a resource bundle in a different language than the resource
+	 * bundle manager one.
+	 */
+	@SuppressWarnings({ "static-method", "nls" })
+	@Test(expected = ResourceException.class)
+	public final void testRegisterBundleWithNonCompatibleLocaleStrict()
+	{
+		ResourceBundleManager.setStrategy(BundleLoadStrategyType.STRICT);
+		ResourceBundleManager.setLocale(Locale.ENGLISH);
+		ResourceBundleManager.register("bundle/hemajoo-foundation-common", Locale.FRENCH);
+	}
+
+	/**
+	 * Test the change of the resource bundle manager locale.
+	 */
+	@SuppressWarnings({ "static-method", "nls" })
+	@Test
+	public final void testChangeLocale()
+	{
+		try
+		{
+			ResourceBundleManager.setLocale(Locale.FRENCH);
+
+			Assert.assertTrue("Not the expected value!", ResourceBundleManager.getMessage("fruit.apple.name").equals("Pomme"));
+		}
+		catch (final ResourceException e)
+		{
+			fail(e.getLocalizedMessage());
+		}
+	}
+
+	/**
+	 * Test a non existing resource bundle entry through the use of an enumerated value.
+	 */
+	@SuppressWarnings("static-method")
+	@Test(expected = ResourceException.class)
+	public final void testNonExistingResourceBundleKey()
+	{
+		ResourceBundleManager.setLocale(Locale.FRENCH);
+		ResourceBundleManager.getMessage(HemajooFoundationCommonBundle.RESOURCE_BUNDLE_KEYDOESNOTEXIST);
+	}
+
+	/**
+	 * Test a non existing resource bundle entry through the use of an enumerated value.
+	 */
+	@SuppressWarnings("static-method")
+	@Test
+	public final void testNotInitialized()
+	{
+		ResourceBundleManager.getMessage(HemajooFoundationCommonBundle.TEST_DUMMY_LANGUAGE);
+	}
+
+	/**
+	 * Test the retrieving of the resource bundle value through an enumerated value.
+	 */
+	@SuppressWarnings({ "static-method", "nls" })
+	@Test
+	public final void testHonorificTypeShort()
+	{
+		Assert.assertTrue("Not the expected value!", TestHonorificType.DAME.getShortTitle().equals("Dame"));
+	}
+
+	/**
+	 * Test the retrieving of the resource bundle value through an enumerated value.
+	 */
+	@SuppressWarnings({ "static-method", "nls" })
+	@Test
+	public final void testHonorificTypeHelpinFrench()
+	{
+		ResourceBundleManager.setLocale(Locale.FRENCH);
+		Assert.assertTrue("Not the expected value!", TestHonorificType.MADAM.getHelpTitle() != null);
 	}
 }
