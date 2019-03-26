@@ -52,8 +52,8 @@
 	</dependency>
 
 	<dependency>
-		<groupId>org.osgl</groupId>
-		<artifactId>genie</artifactId>
+		<groupId>org.jeasy</groupId>
+		<artifactId>easy-props</artifactId>
 	</dependency>
 
   </dependencies>
