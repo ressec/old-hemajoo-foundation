@@ -21,6 +21,7 @@ import com.hemajoo.foundation.common.annotation.IAnnotationVisitor;
 import com.hemajoo.foundation.common.resource.bundle.IBundle;
 import com.hemajoo.foundation.common.resource.bundle.ResourceBundleManager;
 import com.hemajoo.foundation.common.resource.bundle.annotation.Bundle;
+import com.hemajoo.foundation.common.resource.bundle.annotation.FakeAnnotatedWithBundle;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j;
@@ -86,16 +87,18 @@ public final class BundleVisitor implements IAnnotationVisitor
 	 * <hr>
 	 * @param className Name of the class annotated with the {@link Bundle} annotation.
 	 */
-	@SuppressWarnings("unchecked")
 	private final void callForRegistration(final @NonNull String className)
 	{
-		try
+		if (!className.equals(FakeAnnotatedWithBundle.class.getName()))
 		{
-			ResourceBundleManager.register((Class<? extends IBundle>) Class.forName(className));
-		}
-		catch (ClassNotFoundException e)
-		{
-			log.error(e.getMessage(), e);
+			try
+			{
+				ResourceBundleManager.register(Class.forName(className));
+			}
+			catch (ClassNotFoundException e)
+			{
+				log.error(e.getMessage(), e);
+			}
 		}
 	}
 }
