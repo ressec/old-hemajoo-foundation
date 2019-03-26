@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.m2e.Maven2LaunchConfigurationType">
 <booleanAttribute key="M2_DEBUG_OUTPUT" value="false"/>
-<stringAttribute key="M2_GOALS" value="clean compile package"/>
+<stringAttribute key="M2_GOALS" value="clean test package sonar:sonar"/>
 <booleanAttribute key="M2_NON_RECURSIVE" value="false"/>
 <booleanAttribute key="M2_OFFLINE" value="false"/>
 <stringAttribute key="M2_PROFILES" value=""/>
-<listAttribute key="M2_PROPERTIES"/>
+<listAttribute key="M2_PROPERTIES">
+<listEntry value="sonar.login=b762079b269598a3bbb7cb8d22d3e2b6ad68b7b0"/>
+<listEntry value="sonar.host.url=https://sonarcloud.io"/>
+<listEntry value="sonar.organization=ressec-github"/>
+<listEntry value="sonar.projectKey=ressec_hemajoo-foundation"/>
+</listAttribute>
 <stringAttribute key="M2_RUNTIME" value="EMBEDDED"/>
 <booleanAttribute key="M2_SKIP_TESTS" value="false"/>
 <intAttribute key="M2_THREADS" value="1"/>

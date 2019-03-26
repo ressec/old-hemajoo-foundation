@@ -11,32 +11,26 @@
  */
 package com.hemajoo.foundation.common.resource.bundle.annotation;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.hemajoo.foundation.common.resource.bundle.IBundle;
-import com.hemajoo.foundation.common.resource.bundle.ResourceBundleManager;
-
 /**
- * This annotation is used to make a resource bundle enumeration file to be auto
- * registered by the {@link ResourceBundleManager}. This annotation is intended
- * to be placed on enumeration types inheriting the {@link IBundle} interface.
+ * This annotation is used to associate to a method a resource bundle key.
  * <hr>
  * @author <a href="mailto:christophe.resse@gmail.com">Christophe Resse - Hemajoo</a>
  * @version 1.0.0
  */
-@Target({ java.lang.annotation.ElementType.TYPE })
+@Target({ java.lang.annotation.ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BundleEnumRegister
+@Documented
+public @interface BundleMethod
 {
 	/**
-	 * Priority value used for loading the resource bundle enumeration by the {@link ResourceBundleManager}.
-	 * <p>
-	 * Resource bundle enumerations annotated with this annotation and having a low priority value are loaded first ; default priority value is
-	 * {@code 100}.
+	 * The key of the resource bundle entry.
 	 * <hr>
-	 * @return Priority to load the resource bundle enumeration.
+	 * @return Key of the resource bundle entry.
 	 */
-	int priority() default 100;
+	String key();
 }

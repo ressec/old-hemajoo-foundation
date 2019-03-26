@@ -13,7 +13,8 @@ package com.hemajoo.foundation.common.test.resource.bundle.type;
 
 import com.hemajoo.foundation.common.IHemajoo;
 import com.hemajoo.foundation.common.resource.bundle.ResourceBundleManager;
-import com.hemajoo.foundation.common.resource.bundle.annotation.BundleEnum;
+import com.hemajoo.foundation.common.resource.bundle.annotation.Bundle;
+import com.hemajoo.foundation.common.resource.bundle.annotation.BundleMethod;
 import com.neovisionaries.i18n.LanguageCode;
 
 /**
@@ -22,6 +23,7 @@ import com.neovisionaries.i18n.LanguageCode;
  * @author  <a href="mailto:christophe.resse@gmail.com">Resse Christophe - Hemajoo</a>
  * @version 1.0.0
  */
+@Bundle(file="bundle/type.honorific-title", root="enum.honorific")
 public enum TestHonorificType implements IHemajoo
 {
 	/**
@@ -129,10 +131,10 @@ public enum TestHonorificType implements IHemajoo
 	 * <hr>
 	 * @return Short honorific title.
 	 */
-	@BundleEnum(file = "bundle.type.honorific-title", path = "enum.honorific.short")
+	@BundleMethod(key="short")
 	public final String getShortTitle()
 	{
-		return ResourceBundleManager.getResourceForMethodName(this.getClass(), this);
+		return ResourceBundleManager.getBundleValue(this.getClass(), this);
 	}
 
 	/**
@@ -141,10 +143,10 @@ public enum TestHonorificType implements IHemajoo
 	 * @param language {@link LanguageCode} to be used.
 	 * @return Short honorific title.
 	 */
-	@BundleEnum(file = "bundle.type.honorific-title", path = "enum.honorific.short")
+	@BundleMethod(key="short")
 	public final String getShortTitle(final LanguageCode language)
 	{
-		return ResourceBundleManager.getResourceForMethodName(this.getClass(), this, language.toLocale());
+		return ResourceBundleManager.getBundleValue(this.getClass(), this, language.toLocale());
 	}
 
 	/**
@@ -152,10 +154,10 @@ public enum TestHonorificType implements IHemajoo
 	 * <hr>
 	 * @return Long honorific title.
 	 */
-	@BundleEnum(file = "bundle.type.honorific-title", path = "enum.honorific.long")
+	@BundleMethod(key="enum.honorific.long")
 	public final String getLongTitle()
 	{
-		return ResourceBundleManager.getResourceForMethodName(this.getClass(), this);
+		return ResourceBundleManager.getBundleValue(this.getClass(), this);
 	}
 
 	/**
@@ -164,10 +166,10 @@ public enum TestHonorificType implements IHemajoo
 	 * @param language {@link LanguageCode} to be used.
 	 * @return Long honorific title.
 	 */
-	@BundleEnum(file = "bundle.type.honorific-title", path = "enum.honorific.long")
+	@BundleMethod(key="enum.honorific.long")
 	public final String getLongTitle(final LanguageCode language)
 	{
-		return ResourceBundleManager.getResourceForMethodName(this.getClass(), this, language.toLocale());
+		return ResourceBundleManager.getBundleValue(this.getClass(), this, language.toLocale());
 	}
 
 	/**
@@ -175,10 +177,10 @@ public enum TestHonorificType implements IHemajoo
 	 * <hr>
 	 * @return Honorific title help.
 	 */
-	@BundleEnum(file = "bundle.type.honorific-title", path = "enum.honorific.help")
+	@BundleMethod(key="enum.honorific.help")
 	public final String getHelpTitle()
 	{
-		return ResourceBundleManager.getResourceForMethodName(this.getClass(), this);
+		return ResourceBundleManager.getBundleValue(this.getClass(), this);
 	}
 
 	/**
@@ -187,9 +189,9 @@ public enum TestHonorificType implements IHemajoo
 	 * @param language {@link LanguageCode} to be used.
 	 * @return Honorific title help.
 	 */
-	@BundleEnum(file = "bundle.type.honorific-title", path = "enum.honorific.help")
+	@BundleMethod(key="enum.honorific.help")
 	public final String getHelpTitle(final LanguageCode language)
 	{
-		return ResourceBundleManager.getResourceForMethodName(this.getClass(), this, language.toLocale());
+		return ResourceBundleManager.getBundleValue(this.getClass(), this, language.toLocale());
 	}
 }

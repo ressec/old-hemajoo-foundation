@@ -11,8 +11,6 @@
  */
 package com.hemajoo.foundation.common.resource.bundle;
 
-import com.hemajoo.foundation.common.resource.bundle.annotation.BundleEnumRegister;
-
 /**
  * Enumeration of the resource bundle externalized string of the <b>hemajoo common</b> module.
  * Each enumerated value maps to a key in the corresponding resource bundle file.
@@ -24,7 +22,6 @@ import com.hemajoo.foundation.common.resource.bundle.annotation.BundleEnumRegist
  * @version 1.0.0
  */
 @SuppressWarnings("nls")
-@BundleEnumRegister(priority = 0) // This one must be loaded first!
 public enum BundleHemajooFoundationCommon implements IBundle
 {
 	/**

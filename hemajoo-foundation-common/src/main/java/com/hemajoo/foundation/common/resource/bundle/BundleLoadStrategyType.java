@@ -9,23 +9,23 @@
  * License can be consulted at http://www.apache.org/licenses/LICENSE-2.0
  * ---------------------------------------------------------------------------
  */
-package com.hemajoo.foundation.common.test;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-import com.hemajoo.foundation.common.test.resource.bundle.annotation.BundleAnnotationTest;
+package com.hemajoo.foundation.common.resource.bundle;
 
 /**
- * Represents the test suite for the <b>Hemajoo's Foundation Software Common</b> component.
+ * Enumeration of the resource bundle load strategy type.
  * <hr>
- * @author  <a href="mailto:christophe.resse@gmail.com">Resse Christophe - Hemajoo</a>
+ * @author <a href="mailto:christophe.resse@gmail.com">Christophe Resse - Hemajoo</a>
  * @version 1.0.0
  */
-@RunWith(Suite.class)
-@SuiteClasses({ BundleAnnotationTest.class })
-public class CommonTestSuite
+public enum BundleLoadStrategyType
 {
-	// Empty.
+	/**
+	 * Strict bundle load strategy.
+	 */
+	STRICT,
+
+	/**
+	 * Lenient bundle load strategy.
+	 */
+	LENIENT;
 }
