@@ -15,16 +15,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.hemajoo.foundation.common.test.resource.bundle.ResourceBundleTest;
+import com.hemajoo.foundation.common.test.resource.bundle.annotation.BundleAnnotationTest;
 
 /**
- * Represents the test suite for the <b>heliosphere common</b> component.
+ * Represents the test suite for the <b>Hemajoo's Foundation Software Common</b> component.
  * <hr>
  * @author  <a href="mailto:christophe.resse@gmail.com">Resse Christophe - Hemajoo</a>
  * @version 1.0.0
  */
 @RunWith(Suite.class)
-@SuiteClasses({ ResourceBundleTest.class })
+@SuiteClasses({ BundleAnnotationTest.class })
 public class CommonTestSuite
 {
 	// Empty.
