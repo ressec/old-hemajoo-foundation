@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@SuppressWarnings("nls")
 public final class RuntimeAnnotations
 {
 	/*
@@ -69,10 +70,32 @@ public final class RuntimeAnnotations
 		}
 	}
 
+	/**
+	 * Private constructor to prevent instantiation using the public default one!
+	 */
+	private RuntimeAnnotations() {
+		// Empty.
+	}
+
+	/**
+	 * Put a set of annotation properties to an annotated class.
+	 * <hr>
+	 * @param c Class
+	 * @param annotationClass Annotation class.
+	 * @param valuesMap Collection of properties of the annotation.
+	 */
 	public static <T extends Annotation> void putAnnotation(Class<?> c, Class<T> annotationClass, Map<String, Object> valuesMap){
 		putAnnotation(c, annotationClass, annotationForMap(annotationClass, valuesMap));
 	}
 
+	/**
+	 * Put an annotation of a given annotated class.
+	 * <hr>
+	 * @param c Class.
+	 * @param annotationClass Annotation class.
+	 * @param annotation Annotation.
+	 */
+	@SuppressWarnings("boxing")
 	public static <T extends Annotation> void putAnnotation(Class<?> c, Class<T> annotationClass, T annotation){
 		try {
 			while (true) { // retry loop
@@ -92,6 +115,19 @@ public final class RuntimeAnnotations
 
 	}
 
+	/**
+	 * Create annotation data.
+	 * @param c Class.
+	 * @param annotationData Annotation data structure.
+	 * @param annotationClass Annotation class.
+	 * @param annotation Annotation.
+	 * @param classRedefinedCount Counter.
+	 * @return Object representing the newly created annotation data.
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 */
 	@SuppressWarnings("unchecked")
 	private static <T extends Annotation> Object /*AnnotationData*/ createAnnotationData(Class<?> c, Object /*AnnotationData*/ annotationData, Class<T> annotationClass, T annotation, int classRedefinedCount) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Map<Class<? extends Annotation>, Annotation> annotations = (Map<Class<? extends Annotation>, Annotation>) AnnotationData_annotations.get(annotationData);
