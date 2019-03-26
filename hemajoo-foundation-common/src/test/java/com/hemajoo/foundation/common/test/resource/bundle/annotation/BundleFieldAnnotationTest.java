@@ -19,6 +19,7 @@ import org.jeasy.props.annotations.I18NProperty;
 import org.jeasy.props.api.PropertiesInjector;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +29,7 @@ import com.hemajoo.foundation.common.resource.bundle.ResourceBundleManager;
 
 
 /**
- * A test case for the {@link BundleField} annotation.
+ * A test case for the {@link I18NProperty} annotation.
  * <hr>
  * @author  <a href="mailto:christophe.resse@gmail.com">Resse Christophe - Hemajoo</a>
  * @version 1.0.0
@@ -98,6 +99,6 @@ public final class BundleFieldAnnotationTest
 		ColorBundleField color = new ColorBundleField();
 		propertiesInjector.injectProperties(color);
 
-		System.out.println(String.format("Locale: '%s', Color: '%s'", Locale.getDefault(), color.getColorCode()));
+		Assert.assertTrue("Not the expected color value!", color.getColorCode().equals("gelb"));
 	}
 }
