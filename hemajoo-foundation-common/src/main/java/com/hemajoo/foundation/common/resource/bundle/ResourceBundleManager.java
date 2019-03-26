@@ -37,7 +37,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j;
 
 /**
- * Resource Bundle Manager used to discover, register and access resource bundle entries.
+ * Resource Bundle Manager is used to discover, register and access resource bundle entries.
  * <p>
  * Generally heavily used for internationalization purposes.
  * <hr>
@@ -75,18 +75,6 @@ public final class ResourceBundleManager
 	 */
 	private static final Map<String, String> OTHER = new ConcurrentHashMap<>();
 
-	//	/**
-	//	 * Collection of resource bundles by resource bundle class.
-	//	 */
-	//	private static final Map<Class<? extends IBundle>, ResourceBundle> BUNDLES = new HashMap<>(1, 0.75f);
-	//
-	//	/**
-	//	 * Collection of resource bundle names by resource bundle class.
-	//	 */
-	//	private static final Map<Class<? extends IBundle>, String> NAMES = new HashMap<>(1, 0.75f);
-	//
-	//	private static final Map<Class<? extends Enum<?>>, Map<Locale, ResourceBundle>> METHOD_BUNDLES = new HashMap<>(10, 0.75f);
-
 	/**
 	 * English locale.
 	 */
@@ -100,7 +88,13 @@ public final class ResourceBundleManager
 	/**
 	 * Is the manager initialized?
 	 */
-	private static boolean isInitialized = initialize();
+	private static boolean isInitialized = false;
+
+	/**
+	 * Is the manager initializing?
+	 */
+	private static boolean isInitializing = false;
+
 
 	/**
 	 * Returns a resource bundle value given its key.
@@ -110,6 +104,8 @@ public final class ResourceBundleManager
 	 */
 	public static final String getMessage(final @NonNull String key)
 	{
+		initialize();
+
 		return retrieve(key);
 	}
 
@@ -122,6 +118,8 @@ public final class ResourceBundleManager
 	 */
 	public static final String getMessage(final Enum<? extends IBundle> key)
 	{
+		initialize();
+
 		return getMessage(key, (Object[]) null);
 	}
 
@@ -138,9 +136,11 @@ public final class ResourceBundleManager
 	 */
 	public static final String getMessage(final Enum<? extends IBundle> key, final Object... parameters)
 	{
+		initialize();
+
 		if (key == null)
 		{
-			throw new InvalidArgumentException(BundleHemajooFoundationCommon.ResourceBundleInvalidKey);
+			throw new InvalidArgumentException(HemajooFoundationCommonBundle.RESOURCE_BUNDLE_INVALIDKEY);
 		}
 
 		return retrieve(key, parameters);
@@ -156,10 +156,15 @@ public final class ResourceBundleManager
 	 */
 	private static final boolean initialize()
 	{
-		if (!isInitialized)
+		if (!isInitialized && !isInitializing)
 		{
+			isInitializing = true;
+
 			// Auto register classes annotated with @BundleEnumRegister annotation.
 			autoRegisterAnnotated();
+
+			isInitializing = false;
+			isInitialized = true;
 		}
 
 		return true;
@@ -176,6 +181,7 @@ public final class ResourceBundleManager
 			BundleVisitor visitor = new BundleVisitor();
 			final AnnotationDetector detector = new AnnotationDetector(visitor);
 			detector.detect();
+
 			visitor.delegateRegistration();
 		}
 		catch (Exception e)
@@ -201,9 +207,11 @@ public final class ResourceBundleManager
 	 * <p>
 	 * @param annotatedClass Class annotated with the {@link Bundle} annotation.
 	 */
-	@Synchronized
+	@SuppressWarnings("nls")
 	public static final void register(final @NonNull Class<?> annotatedClass)
 	{
+		initialize();
+
 		ResourceBundle bundle = null;
 
 		// Extract the resource bundle file name.
@@ -218,10 +226,24 @@ public final class ResourceBundleManager
 			if (bundle.getLocale().getISO3Language().equals(locale.getISO3Language()))
 			{
 				register(annotatedClass, bundle);
+				log.info(String.format("Resource bundle: '%s' registered for language: '%s'", filename, getLocale()));
 			}
 			else
 			{
-				throw new ResourceBundleException(BundleHemajooFoundationCommon.ResourceBundleError, filename, locale);
+				// Are we in LENIENT mode?
+				if (strategy == BundleLoadStrategyType.LENIENT)
+				{
+					// Then try to load the default resource bundle.
+					bundle = ResourceBundle.getBundle(filename, ENGLISH);
+					if (!register(annotatedClass, bundle))
+					{
+						log.info(String.format("Resource bundle: '%s' registered for language: '%s' due to LENIENT mode", filename, ENGLISH));
+					}
+				}
+				else
+				{
+					throw new ResourceBundleException(HemajooFoundationCommonBundle.RESOURCE_BUNDLE_ERROR, filename, locale);
+				}
 			}
 		}
 		catch (MissingResourceException e)
@@ -238,9 +260,10 @@ public final class ResourceBundleManager
 	 * @throws ResourceBundleException Thrown if the resource bundle file cannot be found.
 	 */
 	@SuppressWarnings("nls")
-	@Synchronized
 	public static final void register(final String filename)
 	{
+		initialize();
+
 		register(filename, "", locale);
 	}
 
@@ -251,9 +274,10 @@ public final class ResourceBundleManager
 	 * @param root Root path to access the keys.
 	 * @throws ResourceBundleException Thrown if the resource bundle file cannot be found.
 	 */
-	@Synchronized
 	public static final void register(final @NonNull String filename, final @NonNull String root)
 	{
+		initialize();
+
 		register(filename, root, locale);
 	}
 
@@ -265,9 +289,10 @@ public final class ResourceBundleManager
 	 * @throws ResourceBundleException Thrown if the resource bundle file cannot be found.
 	 */
 	@SuppressWarnings({ "nls", "hiding" })
-	@Synchronized
 	public static final void register(final @NonNull String filename, final @NonNull Locale locale)
 	{
+		initialize();
+
 		register(filename, "", locale);
 	}
 
@@ -279,6 +304,7 @@ public final class ResourceBundleManager
 	 */
 	public static final void setStrategy(final @NonNull BundleLoadStrategyType strategy)
 	{
+		// This service does not auto initialize the manager!
 		ResourceBundleManager.strategy = strategy;
 	}
 
@@ -294,6 +320,8 @@ public final class ResourceBundleManager
 	@Synchronized
 	public static final void register(final @NonNull String filename, final @NonNull String root, final @NonNull Locale locale)
 	{
+		initialize();
+
 		try
 		{
 			ResourceBundle bundle = ResourceBundle.getBundle(filename, locale);
@@ -345,6 +373,7 @@ public final class ResourceBundleManager
 	 * @param filename Resource bundle file to register.
 	 * @param root Root path to access the keys.
 	 */
+	@SuppressWarnings("nls")
 	private static final void mergeEntries(final @NonNull String filename, final @NonNull String root)
 	{
 		ResourceBundle bundle = ResourceBundle.getBundle(filename, ResourceBundleManager.locale);
@@ -369,7 +398,7 @@ public final class ResourceBundleManager
 	 * to register a resource bundle.
 	 */
 	@SuppressWarnings("nls")
-	private static final void register(final @NonNull Class<?> annotatedClass, final @NonNull ResourceBundle bundle)
+	private static final boolean register(final @NonNull Class<?> annotatedClass, final @NonNull ResourceBundle bundle)
 	{
 		List<ResourceBundle> bundles = new ArrayList<>();
 		Bundle annotation = null;
@@ -378,26 +407,24 @@ public final class ResourceBundleManager
 		annotation = annotatedClass.getAnnotation(Bundle.class);
 		if (annotation == null)
 		{
-			log.error(String.format("Cannot find @Bundle annotation for class %s", annotatedClass.getName()));
-
-			return;
+			throw new ResourceBundleException(String.format("Cannot find @Bundle annotation for class %s", annotatedClass.getName()));
 		}
 
 		if (checkAlreadyRegistered(annotatedClass))
 		{
 			// Ensure we do not register the same annotated class twice.
-			log.warn(String.format("Annotated class %s already registered with bundle %s", annotatedClass.getName(), annotation.file()));
+			log.warn(String.format("Annotated class: '%s' already registered with bundle: '%s'", annotatedClass.getName(), annotation.file()));
 
-			return;
+			return true;
 		}
 
 		// Ensure we do not register the same resource bundle twice.
 		Optional<Class<?>> optionalClass = checkAlreadyRegistered(annotation);
 		if (optionalClass.isPresent())
 		{
-			log.error(String.format("Resource bundle file %s declared twice. First through %s and second through %s", annotation.file(), annotatedClass.getName(), optionalClass.get().getName()));
+			log.warn(String.format("Resource bundle: '%s' ignored because already registered", annotation.file()));
 
-			return;
+			return true;
 		}
 
 		// No similar annotated class already registered, so let's register it.
@@ -405,6 +432,8 @@ public final class ResourceBundleManager
 		CLASSES.putIfAbsent(annotatedClass, bundles);
 
 		mergeEntries(annotation.file(), annotation.root());
+
+		return false;
 	}
 
 	/**
@@ -506,7 +535,8 @@ public final class ResourceBundleManager
 	}
 
 	/**
-	 * Sets the language used by the {@link ResourceBundleManager}.
+	 * Sets the language used by the {@link ResourceBundleManager} and also sets the
+	 * JVM default language.
 	 * <p>
 	 * <b>Note:</b> Calling this service forces the
 	 * {@link ResourceBundleManager} to reload all the resource bundle files
@@ -515,11 +545,20 @@ public final class ResourceBundleManager
 	 * @param locale {@link Locale} corresponding to the new language to set.
 	 */
 	@Synchronized
-	public static final void setLocale(final Locale locale)
+	public static final void setLocale(final @NonNull Locale locale)
 	{
-		if (!locale.getLanguage().equals(ResourceBundleManager.locale.getLanguage()))
+		if (!isInitialized && !isInitializing)
 		{
-			refresh(locale);
+			ResourceBundleManager.locale = locale;
+			Locale.setDefault(ResourceBundleManager.locale);
+			initialize();
+		}
+		else
+		{
+			if (!locale.getLanguage().equals(ResourceBundleManager.locale.getLanguage()))
+			{
+				refresh(locale);
+			}
 		}
 	}
 
@@ -532,6 +571,9 @@ public final class ResourceBundleManager
 	@SuppressWarnings("hiding")
 	private static final void refresh(final @NonNull Locale locale)
 	{
+		Locale.setDefault(locale);
+		ResourceBundleManager.locale = locale;
+
 		// We need to reload everything as the language has changed.
 		ENTRIES.clear();
 		CLASSES.clear();
@@ -560,7 +602,8 @@ public final class ResourceBundleManager
 	 */
 	public static final Locale getLocale()
 	{
-		return new Locale(locale.getLanguage(), locale.getCountry(), locale.getVariant());
+		// This service does not auto initialize the manager.
+		return locale;
 	}
 
 	/**
@@ -572,6 +615,8 @@ public final class ResourceBundleManager
 	 */
 	public static final String getBundleValue(final @NonNull Class<? extends Enum<?>> annotatedClass, final @NonNull Enum<?> enumerated)
 	{
+		initialize();
+
 		return getBundleValue(annotatedClass, enumerated, ResourceBundleManager.locale);
 	}
 
@@ -586,6 +631,8 @@ public final class ResourceBundleManager
 	@SuppressWarnings({ "nls", "hiding" })
 	public static final String getBundleValue(final @NonNull Class<? extends Enum<?>> annotatedClass, final @NonNull Enum<?> enumerated, final @NonNull Locale locale)
 	{
+		initialize();
+
 		String message = null;
 
 		Bundle annotationClass = annotatedClass.getAnnotation(Bundle.class);
