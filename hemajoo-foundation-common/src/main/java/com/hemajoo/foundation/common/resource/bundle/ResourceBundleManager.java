@@ -32,7 +32,6 @@ import com.hemajoo.foundation.common.resource.bundle.visitor.BundleVisitor;
 
 import eu.infomas.annotation.AnnotationDetector;
 import lombok.NonNull;
-import lombok.Synchronized;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j;
 
@@ -76,14 +75,14 @@ public final class ResourceBundleManager
 	private static final Map<String, String> OTHER = new ConcurrentHashMap<>();
 
 	/**
-	 * English locale.
+	 * Default fall-back locale.
 	 */
-	public static final Locale ENGLISH = Locale.ENGLISH;
+	public static Locale defaultLocale = Locale.ENGLISH;
 
 	/**
 	 * Locale of manager (set to english by default).
 	 */
-	private static Locale locale = ENGLISH;
+	private static Locale locale = ResourceBundleManager.defaultLocale;
 
 	/**
 	 * Is the manager initialized?
@@ -95,6 +94,11 @@ public final class ResourceBundleManager
 	 */
 	private static boolean isInitializing = false;
 
+	static
+	{
+		// Forces the JVM to have the same language default than the resource bundle manager.
+		Locale.setDefault(defaultLocale);
+	}
 
 	/**
 	 * Returns a resource bundle value given its key.
@@ -207,7 +211,6 @@ public final class ResourceBundleManager
 	 * <p>
 	 * @param annotatedClass Class annotated with the {@link Bundle} annotation.
 	 */
-	@SuppressWarnings("nls")
 	public static final void register(final @NonNull Class<?> annotatedClass)
 	{
 		initialize();
@@ -226,7 +229,6 @@ public final class ResourceBundleManager
 			if (bundle.getLocale().getISO3Language().equals(locale.getISO3Language()))
 			{
 				register(annotatedClass, bundle);
-				log.info(String.format("Resource bundle: '%s' registered for language: '%s'", filename, getLocale()));
 			}
 			else
 			{
@@ -234,11 +236,8 @@ public final class ResourceBundleManager
 				if (strategy == BundleLoadStrategyType.LENIENT)
 				{
 					// Then try to load the default resource bundle.
-					bundle = ResourceBundle.getBundle(filename, ENGLISH);
-					if (!register(annotatedClass, bundle))
-					{
-						log.info(String.format("Resource bundle: '%s' registered for language: '%s' due to LENIENT mode", filename, ENGLISH));
-					}
+					bundle = ResourceBundle.getBundle(filename, defaultLocale);
+					register(annotatedClass, bundle);
 				}
 				else
 				{
@@ -302,10 +301,13 @@ public final class ResourceBundleManager
 	 * @param strategy Load strategy type.
 	 * @see BundleLoadStrategyType
 	 */
+	@SuppressWarnings("nls")
 	public static final void setStrategy(final @NonNull BundleLoadStrategyType strategy)
 	{
 		// This service does not auto initialize the manager!
 		ResourceBundleManager.strategy = strategy;
+
+		log.info(String.format("Resource bundle manager load strategy set to: '%s'", strategy));
 	}
 
 	/**
@@ -317,15 +319,15 @@ public final class ResourceBundleManager
 	 * @throws ResourceBundleException Thrown if the resource bundle file cannot be found.
 	 */
 	@SuppressWarnings({ "nls", "hiding" })
-	@Synchronized
 	public static final void register(final @NonNull String filename, final @NonNull String root, final @NonNull Locale locale)
 	{
+		String message;
+
 		initialize();
 
 		try
 		{
 			ResourceBundle bundle = ResourceBundle.getBundle(filename, locale);
-			String message = String.format("Resource bundle file: '%s' with language: '%s' cannot be registered because it does not match resource bundle manager language set to: '%s'", filename, locale, ResourceBundleManager.locale);
 
 			// Ensure the registered resource bundle is for the required language.
 			if (!bundle.getLocale().getISO3Language().equals(ResourceBundleManager.locale.getISO3Language()))
@@ -336,20 +338,16 @@ public final class ResourceBundleManager
 					bundle = ResourceBundle.getBundle(filename, ResourceBundleManager.locale);
 					if (!bundle.getLocale().getISO3Language().equals(ResourceBundleManager.locale.getISO3Language()))
 					{
-						message = String.format("Resource bundle file: '%s' cannot be found for language: '%s'",filename, ResourceBundleManager.locale);
-						log.error(message);
-						throw new ResourceBundleException(message);
+						message = String.format("Resource bundle: '%s' cannot be found for language: '%s'",filename, ResourceBundleManager.locale);
+						log.warn(message);
 					}
 
-					log.warn(String.format("Resource bundle manager strategy: LENIENT, found a compatible resource bundle file: '%s' with language: '%s matching the language of the resource bundle manager'", filename, bundle.getLocale()));
-					log.info("If you do not want this behavior:");
-					log.info(" . change the locale used by the resource bundle manager");
-					log.info(" . change the resource bundle manager load strategy type to: STRICT");
-
 					mergeEntries(filename, root);
+					log.info(String.format("Resource bundle: '%s' registered for language: '%s' due to LENIENT mode", filename, bundle.getLocale().getLanguage().length() == 0 ? ResourceBundleManager.defaultLocale : bundle.getLocale()));
 				}
 				else
 				{
+					message = String.format("Resource bundle: '%s' with language: '%s' ignored because it does not match resource bundle manager language set to: '%s'", filename, locale, ResourceBundleManager.locale);
 					log.error(message);
 					throw new ResourceBundleException(message);
 				}
@@ -357,6 +355,7 @@ public final class ResourceBundleManager
 			else
 			{
 				mergeEntries(filename, root);
+				log.info(String.format("Resource bundle: '%s' registered for language: '%s'", filename, bundle.getLocale()));
 			}
 		}
 		catch (MissingResourceException e)
@@ -373,7 +372,6 @@ public final class ResourceBundleManager
 	 * @param filename Resource bundle file to register.
 	 * @param root Root path to access the keys.
 	 */
-	@SuppressWarnings("nls")
 	private static final void mergeEntries(final @NonNull String filename, final @NonNull String root)
 	{
 		ResourceBundle bundle = ResourceBundle.getBundle(filename, ResourceBundleManager.locale);
@@ -398,7 +396,7 @@ public final class ResourceBundleManager
 	 * to register a resource bundle.
 	 */
 	@SuppressWarnings("nls")
-	private static final boolean register(final @NonNull Class<?> annotatedClass, final @NonNull ResourceBundle bundle)
+	private static final void register(final @NonNull Class<?> annotatedClass, final @NonNull ResourceBundle bundle)
 	{
 		List<ResourceBundle> bundles = new ArrayList<>();
 		Bundle annotation = null;
@@ -415,7 +413,7 @@ public final class ResourceBundleManager
 			// Ensure we do not register the same annotated class twice.
 			log.warn(String.format("Annotated class: '%s' already registered with bundle: '%s'", annotatedClass.getName(), annotation.file()));
 
-			return true;
+			return;
 		}
 
 		// Ensure we do not register the same resource bundle twice.
@@ -424,7 +422,7 @@ public final class ResourceBundleManager
 		{
 			log.warn(String.format("Resource bundle: '%s' ignored because already registered", annotation.file()));
 
-			return true;
+			return;
 		}
 
 		// No similar annotated class already registered, so let's register it.
@@ -432,8 +430,14 @@ public final class ResourceBundleManager
 		CLASSES.putIfAbsent(annotatedClass, bundles);
 
 		mergeEntries(annotation.file(), annotation.root());
-
-		return false;
+		if (!bundle.getLocale().getISO3Language().equals(ResourceBundleManager.locale.getISO3Language()))
+		{
+			log.info(String.format("Resource bundle: '%s' registered for language: '%s' due to LENIENT mode", annotation.file(), bundle.getLocale()));
+		}
+		else
+		{
+			log.info(String.format("Resource bundle: '%s' registered for language: '%s'", annotation.file(), bundle.getLocale()));
+		}
 	}
 
 	/**
@@ -535,6 +539,16 @@ public final class ResourceBundleManager
 	}
 
 	/**
+	 * Sets the default locale (for fall-back scenarios).
+	 * <p>
+	 * @param locale {@link Locale} corresponding to the new language to set.
+	 */
+	public static final void setDefaultLocale(final @NonNull Locale locale)
+	{
+		ResourceBundleManager.defaultLocale = locale;
+	}
+
+	/**
 	 * Sets the language used by the {@link ResourceBundleManager} and also sets the
 	 * JVM default language.
 	 * <p>
@@ -544,21 +558,19 @@ public final class ResourceBundleManager
 	 * <p>
 	 * @param locale {@link Locale} corresponding to the new language to set.
 	 */
-	@Synchronized
+	@SuppressWarnings("nls")
 	public static final void setLocale(final @NonNull Locale locale)
 	{
 		if (!isInitialized && !isInitializing)
 		{
-			ResourceBundleManager.locale = locale;
-			Locale.setDefault(ResourceBundleManager.locale);
 			initialize();
 		}
-		else
+
+		if (!locale.getLanguage().equals(ResourceBundleManager.locale.getLanguage()))
 		{
-			if (!locale.getLanguage().equals(ResourceBundleManager.locale.getLanguage()))
-			{
-				refresh(locale);
-			}
+			log.info(String.format("Resource bundle manager language set to: '%s', previous was: '%s'", locale, ResourceBundleManager.locale));
+
+			refresh(locale);
 		}
 	}
 
@@ -568,23 +580,25 @@ public final class ResourceBundleManager
 	 * <p>
 	 * @param locale {@link Locale} corresponding to the new language to use.
 	 */
-	@SuppressWarnings("hiding")
+	@SuppressWarnings({ "hiding", "nls" })
 	private static final void refresh(final @NonNull Locale locale)
 	{
 		Locale.setDefault(locale);
 		ResourceBundleManager.locale = locale;
 
+		log.info(String.format("Refreshing resource bundle files for language: '%s'...", ResourceBundleManager.locale));
+
 		// We need to reload everything as the language has changed.
 		ENTRIES.clear();
 		CLASSES.clear();
-
-		ResourceBundleManager.locale = locale;
 
 		// Re-launch the auto registration of all annotated classes.
 		autoRegisterAnnotated();
 
 		// Register back all bundles registered directly (without annotated class).
 		autoRegisterNotAnnotated();
+
+		log.info("Finished refreshing resource bundle files");
 	}
 
 	/**
