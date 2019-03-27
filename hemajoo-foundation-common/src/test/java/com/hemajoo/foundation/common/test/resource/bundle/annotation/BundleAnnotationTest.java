@@ -30,6 +30,8 @@ import com.hemajoo.foundation.common.resource.bundle.ResourceBundleManager;
 import com.hemajoo.foundation.common.resource.bundle.annotation.Bundle;
 import com.hemajoo.foundation.common.test.resource.bundle.type.TestHonorificType;
 
+import lombok.extern.log4j.Log4j;
+
 
 /**
  * A test case for the {@link Bundle} annotation.
@@ -37,6 +39,7 @@ import com.hemajoo.foundation.common.test.resource.bundle.type.TestHonorificType
  * @author  <a href="mailto:christophe.resse@gmail.com">Resse Christophe - Hemajoo</a>
  * @version 1.0.0
  */
+@Log4j
 public final class BundleAnnotationTest
 {
 	/**
@@ -47,6 +50,8 @@ public final class BundleAnnotationTest
 	@BeforeClass
 	public static final void setUpBeforeClass() throws Exception
 	{
+		ResourceBundleManager.setLocale(Locale.ENGLISH);
+
 		// Ensure the HemajooFoundationCommonBundle and associated resource bundle file is loaded first.
 		ResourceBundleManager.getMessage(HemajooFoundationCommonBundle.TEST_DUMMY_LANGUAGE);
 	}
@@ -85,7 +90,7 @@ public final class BundleAnnotationTest
 	}
 
 	/**
-	 * Test the direct registration of a resource bundle file (not thorugh the use of an annotation).
+	 * Test the direct registration of a resource bundle file (not through the use of an annotation).
 	 */
 	@SuppressWarnings({ "static-method", "nls" })
 	@Test
@@ -105,7 +110,7 @@ public final class BundleAnnotationTest
 		try
 		{
 			ResourceBundleManager.setLocale(Locale.ENGLISH);
-			Assert.assertTrue("Not the expected value!", Collator.getInstance(ResourceBundleManager.ENGLISH)
+			Assert.assertTrue("Not the expected value!", Collator.getInstance(ResourceBundleManager.defaultLocale)
 					.equals(ResourceBundleManager.getMessage("queen.album.ten-first.9"), "Flash Gordon"));
 		}
 		catch (final ResourceException e)
@@ -126,7 +131,7 @@ public final class BundleAnnotationTest
 			ResourceBundleManager.setLocale(Locale.ENGLISH);
 			ResourceBundleManager.register("bundle/color/color", "color");
 
-			Assert.assertTrue("Not the expected value!", Collator.getInstance(ResourceBundleManager.ENGLISH)
+			Assert.assertTrue("Not the expected value!", Collator.getInstance(ResourceBundleManager.defaultLocale)
 					.equals(ResourceBundleManager.getMessage("blue.name"), "Blue"));
 		}
 		catch (final ResourceException e)
@@ -145,7 +150,7 @@ public final class BundleAnnotationTest
 		try
 		{
 			ResourceBundleManager.setLocale(Locale.FRENCH);
-			Assert.assertTrue("Not the expected value!",
+			Assert.assertTrue(String.format("Expected value was: '%s' but is: '%s'", "Français", ResourceBundleManager.getMessage(HemajooFoundationCommonBundle.TEST_DUMMY_LANGUAGE)),
 					ResourceBundleManager.getMessage(HemajooFoundationCommonBundle.TEST_DUMMY_LANGUAGE).equals("Français"));
 		}
 		catch (final ResourceException e)
@@ -190,8 +195,9 @@ public final class BundleAnnotationTest
 		try
 		{
 			ResourceBundleManager.setLocale(Locale.FRENCH);
-
-			Assert.assertTrue("Not the expected value!", ResourceBundleManager.getMessage("fruit.apple.name").equals("Pomme"));
+			Assert.assertTrue(
+					String.format("Expected value was: '%s' but is: '%s'", "Pomme", ResourceBundleManager.getMessage("fruit.apple.name")),
+					ResourceBundleManager.getMessage("fruit.apple.name").equals("Pomme"));
 		}
 		catch (final ResourceException e)
 		{
@@ -235,9 +241,10 @@ public final class BundleAnnotationTest
 	 */
 	@SuppressWarnings({ "static-method", "nls" })
 	@Test
-	public final void testHonorificTypeHelpinFrench()
+	public final void testHonorificTypeMadamLongInFrench()
 	{
 		ResourceBundleManager.setLocale(Locale.FRENCH);
-		Assert.assertTrue("Not the expected value!", TestHonorificType.MADAM.getHelpTitle() != null);
+		Assert.assertTrue(String.format("Expected value was: '%s' but is: '%s'", "Madame",
+				TestHonorificType.MADAM.getLongTitle()), TestHonorificType.MADAM.getLongTitle().equals("Madame"));
 	}
 }
